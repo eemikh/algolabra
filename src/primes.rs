@@ -1,3 +1,5 @@
+use num_bigint::{BigUint, RandBigInt};
+
 /// Laskee Eratostheneen seulalla kaikki alkuluvut, jotka ovat vähemmän kuin `n`.
 ///
 /// Algoritmi on esitelty artikkelissa <https://research.cs.wisc.edu/techreports/1990/TR909.pdf>.
@@ -25,6 +27,18 @@ pub fn primes_up_to(n: usize) -> impl Iterator<Item = usize> {
         // otetaan ne indeksit, joilla arvo on true
         .filter(|&(_, is_prime)| is_prime)
         .map(|(index, _)| index)
+}
+
+/// Generoi satunnaisen parittoman n-bittisen kokonaisluvun.
+fn random_odd_integer(bits: u64) -> BigUint {
+    let mut integer = rand::thread_rng().gen_biguint(bits);
+
+    // varmistetaan, että luku on pariton
+    integer.set_bit(0, true);
+    // varmistetaan, että luku on vähintään 2^(bits - 1) asettamalla ylin bitti
+    integer.set_bit(bits - 1, true);
+
+    integer
 }
 
 #[cfg(test)]
@@ -75,5 +89,22 @@ mod tests {
     #[should_panic]
     fn test_primes_up_to_invalid_n() {
         let _ = primes_up_to(2);
+    }
+
+    #[test]
+    fn test_random_odd_integer() {
+        // kokeillaan 128 kertaa, että satunnainen 1024-bittinen kokonaisluku on joka kerta pariton,
+        // on vähintään 2^1023, ja ykkösten määrä on 400 ja 600 välillä
+        let minimum = BigUint::from(2u32).pow(1023);
+        let one = BigUint::from(1u32);
+
+        for _ in 0..128 {
+            let integer = random_odd_integer(1024);
+            let ones = integer.count_ones();
+
+            assert!(ones > 400 && ones < 600);
+            assert!(integer >= minimum);
+            assert!(integer % 2u32 == one);
+        }
     }
 }
