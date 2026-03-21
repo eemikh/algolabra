@@ -1,2 +1,3 @@
 - [Määrittelydokumentti](docs/määrittely.md)
 - [Viikkoraportti 1](docs/viikko_1.md)
+- [Viikkoraportti 2](docs/viikko_2.md)
