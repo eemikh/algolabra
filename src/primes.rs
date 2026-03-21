@@ -41,6 +41,22 @@ fn random_odd_integer(bits: u64) -> BigUint {
     integer
 }
 
+enum MillerRabinResult {
+    Composite,
+    StrongPseudoprime,
+}
+
+fn miller_rabin(n: BigUint) -> MillerRabinResult {
+    // generoidaan luku väliltä [2, n - 2]
+    let a = rand::thread_rng().gen_biguint_range(&BigUint::from(2u32), &(&n - 2u32));
+
+    if !n.bit(0) {
+        return MillerRabinResult::Composite;
+    }
+
+    MillerRabinResult::Composite
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
